@@ -37,26 +37,25 @@ public class Ejercicio2 {
 
         while (vidas > 0 && !(fila == 4 && columna == 4)) {
             mostrarLaberinto(mapa);
-            System.out.println("Posición actual: [" + fila + "][" + columna + "]");
             System.out.println("Vidas restantes: " + vidas);
             System.out.println("Controles: W arriba | S abajo | A izquierda | D derecha");
             System.out.print("Movimiento: ");
-            String tecla = cin.nextLine().trim().toUpperCase();
+            String tecla = cin.nextLine().trim().toLowerCase();
 
             int nuevaFila = fila;
             int nuevaColumna = columna;
 
             switch (tecla) {
-                case "W":
+                case "w":
                     nuevaFila--;
                     break;
-                case "S":
+                case "s":
                     nuevaFila++;
                     break;
-                case "A":
+                case "a":
                     nuevaColumna--;
                     break;
-                case "D":
+                case "d":
                     nuevaColumna++;
                     break;
                 default:
@@ -65,7 +64,7 @@ public class Ejercicio2 {
             }
 
             if (nuevaFila < 0 || nuevaFila >= 5 || nuevaColumna < 0 || nuevaColumna >= 5) {
-                System.out.println("Movimiento inválido: fuera de los límites");
+                System.out.println("Movimiento inválido");
                 continue;
             }
 
@@ -78,7 +77,7 @@ public class Ejercicio2 {
             // ¿Hay intruso oculto?
             if (intrusos[nuevaFila][nuevaColumna]) {
                 vidas--;
-                System.out.println("¡Encontraste un intruso!");
+                System.out.println("Chocaste con un enemigo");
                 System.out.println("Vidas restantes: " + vidas);
                 fila = 0;
                 columna = 0;
@@ -93,9 +92,9 @@ public class Ejercicio2 {
         mostrarLaberinto(mapa);
 
         if (fila == 4 && columna == 4) {
-            System.out.println("¡MISIÓN COMPLETADA!");
+            System.out.println("GANASTE");
         } else {
-            System.out.println("GAME OVER");
+            System.out.println("PERDISTE");
         }
     }
 
