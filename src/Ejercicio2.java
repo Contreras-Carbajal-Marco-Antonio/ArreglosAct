@@ -1,6 +1,9 @@
 import java.util.Scanner;
 import java.util.Random;
 
+//Contreras Carbajal Marco Antonio
+//Lopez Gonzales Daniel
+
 public class Ejercicio2 {
     static Scanner cin = new Scanner(System.in);
 
@@ -13,7 +16,6 @@ public class Ejercicio2 {
         int vidas = 3;
         int fila = 0;
         int columna = 0;
-        Random random = new Random();
 
         for (int i = 0; i < mapa.length; i++) {
             for (int j = 0; j < mapa[i].length; j++) {
@@ -23,23 +25,13 @@ public class Ejercicio2 {
         mapa[4][4] = meta;
         mapa[fila][columna] = robot;
 
-        int enemigosColocados = 0;
-        while (enemigosColocados < 5) {
-            int f = random.nextInt(5);
-            int c = random.nextInt(5);
-            boolean esInicio = (f == 0 && c == 0);
-            boolean esMeta = (f == 4 && c == 4);
-            if (!esInicio && !esMeta && !intrusos[f][c]) {
-                intrusos[f][c] = true;
-                enemigosColocados++;
-            }
-        }
+        generarMoustros(intrusos);
 
         while (vidas > 0 && !(fila == 4 && columna == 4)) {
             mostrarLaberinto(mapa);
             System.out.println("Vidas restantes: " + vidas);
             System.out.println("Controles: W arriba | S abajo | A izquierda | D derecha");
-            System.out.print("Movimiento: ");
+            System.out.print("Ingresa una tecla: ");
             String tecla = cin.nextLine().trim().toLowerCase();
 
             int nuevaFila = fila;
@@ -82,6 +74,7 @@ public class Ejercicio2 {
                 fila = 0;
                 columna = 0;
                 mapa[fila][columna] = robot;
+                generarMoustros(intrusos);
             } else {
                 fila = nuevaFila;
                 columna = nuevaColumna;
@@ -104,6 +97,27 @@ public class Ejercicio2 {
                 System.out.print(mapa[i][j] + " ");
             }
             System.out.println();
+        }
+    }
+    static void generarMoustros(boolean[][] intrusos) {
+        for (int i = 0; i < intrusos.length; i++) {
+            for (int j = 0; j < intrusos[i].length; j++) {
+                intrusos[i][j] = false;
+            }
+        }
+
+        Random random = new Random();
+        int enemigosColocados = 0;
+        while (enemigosColocados < 5) {
+            int f = random.nextInt(5);
+            int c = random.nextInt(5);
+            boolean esInicio = (f == 0 && c == 0);
+            boolean esMeta = (f == 4 && c == 4);
+            if (!esInicio && !esMeta && !intrusos[f][c]) {
+                intrusos[f][c] = true;
+                enemigosColocados++;
+                System.out.println(f + " " + c);
+            }
         }
     }
 }
