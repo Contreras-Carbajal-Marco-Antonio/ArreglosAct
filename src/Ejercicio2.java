@@ -6,113 +6,105 @@ public class Ejercicio2 {
 
     public static void main(String[] args) {
         String[][] mapa = new String[5][5];
+        boolean[][] intrusos = new boolean[5][5];
         String vacio = "⬜";
         String robot = "🤖";
-        String enemigo = "👺s";
-        int vida = 3;
+        String meta = "🏁";
+        int vidas = 3;
         int fila = 0;
-
         int columna = 0;
-        int metaFila = mapa.length - 1;
-        int metaColumna = mapa[0].length - 1;
-        mapa[4][4] = "🏁";
+        Random random = new Random();
 
-
+        for (int i = 0; i < mapa.length; i++) {
+            for (int j = 0; j < mapa[i].length; j++) {
+                mapa[i][j] = vacio;
+            }
+        }
+        mapa[4][4] = meta;
         mapa[fila][columna] = robot;
 
-        Random random = new Random();
         int enemigosColocados = 0;
-
-        void laberinto() {
-            for (int i = 0; i < mapa.length; i++) {
-                for (int j = 0; j < mapa[i].length; j++) {
-                    mapa[i][j] = vacio;
-                    mapa[4][4] = "🏁";
-                }
+        while (enemigosColocados < 5) {
+            int f = random.nextInt(5);
+            int c = random.nextInt(5);
+            boolean esInicio = (f == 0 && c == 0);
+            boolean esMeta = (f == 4 && c == 4);
+            if (!esInicio && !esMeta && !intrusos[f][c]) {
+                intrusos[f][c] = true;
+                enemigosColocados++;
             }
         }
 
-        do {
-            int filaEnemigo = random.nextInt(mapa.length);
-            int columnaEnemigo = random.nextInt(mapa[0].length);
-            boolean esInicio = (filaEnemigo == 0 && columnaEnemigo == 0);
-            boolean esMeta = (filaEnemigo == metaFila && columnaEnemigo == metaColumna);
-            if (!esInicio && !esMeta && mapa[filaEnemigo][columnaEnemigo].equals(vacio)) {
-                mapa[filaEnemigo][columnaEnemigo] = enemigo;
-                enemigosColocados++;
-            }
-        } while(enemigosColocados < 4);
-
-        do {
-            for (int i = 0; i < mapa.length; i++) {
-                for (int j = 0; j < mapa[i].length; j++) {
-                    System.out.print(mapa[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("Vidas: " + vida);
-            System.out.println("Llega a la esquina inferior derecha.");
-            System.out.println("Ingrese una tecla para moverte:");
-            System.out.println("w: arriba");
-            System.out.println("s: abajo");
-            System.out.println("a: izquierda");
-            System.out.println("d: derecha");
-            String tecla = cin.nextLine().toLowerCase();
+        while (vidas > 0 && !(fila == 4 && columna == 4)) {
+            mostrarLaberinto(mapa);
+            System.out.println("Posición actual: [" + fila + "][" + columna + "]");
+            System.out.println("Vidas restantes: " + vidas);
+            System.out.println("Controles: W arriba | S abajo | A izquierda | D derecha");
+            System.out.print("Movimiento: ");
+            String tecla = cin.nextLine().trim().toUpperCase();
 
             int nuevaFila = fila;
             int nuevaColumna = columna;
+
             switch (tecla) {
-                case "w":
+                case "W":
                     nuevaFila--;
                     break;
-                case "s":
+                case "S":
                     nuevaFila++;
                     break;
-                case "a":
+                case "A":
                     nuevaColumna--;
                     break;
-                case "d":
+                case "D":
                     nuevaColumna++;
                     break;
                 default:
-                    System.out.println("Tecla no valida");
+                    System.out.println("Tecla no válida");
                     continue;
             }
 
-            if (nuevaFila < 0 || nuevaFila >= mapa.length || nuevaColumna < 0 || nuevaColumna >= mapa[nuevaFila].length) {
-                System.out.println("Movimiento invalido");
-            } else if (mapa[nuevaFila][nuevaColumna] == enemigo) {
-                vida--;
-                mapa[fila][columna] = vacio;
-                mapa[nuevaFila][nuevaColumna] = robot;
-                fila = nuevaFila;
-                columna = nuevaColumna;
-                System.out.println("Chocaste con un enemigo. Vidas: " + vida);
-                enemigosColocados = 0;
-
-                do {
-                    int filaEnemigo = random.nextInt(mapa.length);
-                    int columnaEnemigo = random.nextInt(mapa[0].length);
-                    boolean esInicio = (filaEnemigo == 0 && columnaEnemigo == 0);
-                    boolean esMeta = (filaEnemigo == metaFila && columnaEnemigo == metaColumna);
-                    if (!esInicio && !esMeta && mapa[filaEnemigo][columnaEnemigo].equals(vacio)) {
-                        mapa[filaEnemigo][columnaEnemigo] = enemigo;
-                        enemigosColocados++;
-                    }
-                } while (enemigosColocados < 4);
-                
-            } else if (mapa[nuevaFila][nuevaColumna] == vacio) {
-                mapa[fila][columna] = vacio;
-                mapa[nuevaFila][nuevaColumna] = robot;
-                fila = nuevaFila;
-                columna = nuevaColumna;
+            if (nuevaFila < 0 || nuevaFila >= 5 || nuevaColumna < 0 || nuevaColumna >= 5) {
+                System.out.println("Movimiento inválido: fuera de los límites");
+                continue;
             }
-        } while (mapa[metaFila][metaColumna] != robot && vida > 0);
 
-        if (vida > 0) {
-            System.out.println("Ganaste");
+            if (fila == 4 && columna == 4) {
+                mapa[fila][columna] = meta;
+            } else {
+                mapa[fila][columna] = vacio;
+            }
+
+            // ¿Hay intruso oculto?
+            if (intrusos[nuevaFila][nuevaColumna]) {
+                vidas--;
+                System.out.println("¡Encontraste un intruso!");
+                System.out.println("Vidas restantes: " + vidas);
+                fila = 0;
+                columna = 0;
+                mapa[fila][columna] = robot;
+            } else {
+                fila = nuevaFila;
+                columna = nuevaColumna;
+                mapa[fila][columna] = robot;
+            }
+        }
+
+        mostrarLaberinto(mapa);
+
+        if (fila == 4 && columna == 4) {
+            System.out.println("¡MISIÓN COMPLETADA!");
         } else {
-            System.out.println("Perdiste");
+            System.out.println("GAME OVER");
+        }
+    }
+
+    static void mostrarLaberinto(String[][] mapa) {
+        for (int i = 0; i < mapa.length; i++) {
+            for (int j = 0; j < mapa[i].length; j++) {
+                System.out.print(mapa[i][j] + " ");
+            }
+            System.out.println();
         }
     }
 }
