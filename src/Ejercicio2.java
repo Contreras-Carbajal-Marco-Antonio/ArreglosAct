@@ -9,61 +9,89 @@ public class Ejercicio2 {
         String vacio = "⬜";
         String robot = "🤖";
         String enemigo = "👹";
-        String[] vida = {"💙","💙","💙"};
-        mapa[0][0] = robot;
+        int vida = 3;
+        int fila = 0;
+        int columna = 0;
+        int metaFila = mapa.length - 1;
+        int metaColumna = mapa[0].length - 1;
 
-        int columna=0,fila=0;
+        for (int i = 0; i < mapa.length; i++) {
+            for (int j = 0; j < mapa[i].length; j++) {
+                mapa[i][j] = vacio;
+            }
+        }
+        mapa[fila][columna] = robot;
 
-        do{
-            for(int i=0; i<mapa.length; i++){
-                for(int j=0; j<mapa[i].length; j++){
+        int enemigosColocados = 0;
+        while (enemigosColocados < 4) {
+            int filaEnemigo = random.nextInt(mapa.length);
+            int columnaEnemigo = random.nextInt(mapa[0].length);
+            boolean esInicio = filaEnemigo == 0 && columnaEnemigo == 0;
+            boolean esMeta = filaEnemigo == metaFila && columnaEnemigo == metaColumna;
+            if (!esInicio && !esMeta && mapa[filaEnemigo][columnaEnemigo] == vacio) {
+                mapa[filaEnemigo][columnaEnemigo] = enemigo;
+                enemigosColocados++;
+            }
+        }
+
+        do {
+            for (int i = 0; i < mapa.length; i++) {
+                for (int j = 0; j < mapa[i].length; j++) {
                     System.out.print(mapa[i][j] + " ");
                 }
                 System.out.println();
             }
-            for(int i = 1; i<5; i++){
-                int filaEnemigo = random.nextInt(5);
-                int columnaEnemigo = random.nextInt(5);
-                if(mapa[filaEnemigo][columnaEnemigo] == vacio){
-                    mapa[filaEnemigo][columnaEnemigo] = enemigo;
-                }     
-            }
-            
+            System.out.println("Vidas: " + vida);
+            System.out.println("Llega a la esquina inferior derecha.");
             System.out.println("Ingrese una tecla para moverte:");
             System.out.println("w: arriba");
             System.out.println("s: abajo");
             System.out.println("a: izquierda");
             System.out.println("d: derecha");
             String tecla = cin.nextLine().toLowerCase();
-            switch(tecla){
+
+            int nuevaFila = fila;
+            int nuevaColumna = columna;
+            switch (tecla) {
                 case "w":
-                    if(mapa[fila-1][columna] == vacio){
-                        mapa[fila][columna] = vacio;
-                        mapa[fila-1][columna] = robot;
-                    }
+                    nuevaFila--;
                     break;
                 case "s":
-                    if(mapa[fila+1][columna] == vacio){
-                        mapa[fila][columna] = vacio;
-                        mapa[fila+1][columna] = robot;
-                    }
+                    nuevaFila++;
                     break;
                 case "a":
-                    if(mapa[fila][columna-1] == vacio){
-                        mapa[fila][columna] = vacio;
-                        mapa[fila][columna-1] = robot;
-                    }
+                    nuevaColumna--;
                     break;
                 case "d":
-                    if(mapa[fila][columna+1] == vacio){
-                        mapa[fila][columna] = vacio;
-                        mapa[fila][columna+1] = robot;
-                    }
+                    nuevaColumna++;
                     break;
                 default:
                     System.out.println("Tecla no valida");
-                    break;
+                    continue;
             }
-        } while (mapa[5][5] == robot || vida[0] == "💔");
+
+            if (nuevaFila < 0 || nuevaFila >= mapa.length
+                    || nuevaColumna < 0 || nuevaColumna >= mapa[nuevaFila].length) {
+                System.out.println("Movimiento invalido");
+            } else if (mapa[nuevaFila][nuevaColumna] == enemigo) {
+                vida--;
+                mapa[fila][columna] = vacio;
+                mapa[nuevaFila][nuevaColumna] = robot;
+                fila = nuevaFila;
+                columna = nuevaColumna;
+                System.out.println("Chocaste con un enemigo. Vidas: " + vida);
+            } else if (mapa[nuevaFila][nuevaColumna] == vacio) {
+                mapa[fila][columna] = vacio;
+                mapa[nuevaFila][nuevaColumna] = robot;
+                fila = nuevaFila;
+                columna = nuevaColumna;
+            }
+        } while (mapa[metaFila][metaColumna] != robot && vida > 0);
+
+        if (vida > 0) {
+            System.out.println("Ganaste");
+        } else {
+            System.out.println("Perdiste");
+        }
     }
 }
